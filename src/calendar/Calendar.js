@@ -6,7 +6,7 @@ export default class Calendar extends Component {
   constructor(props) {
     super(props);
 
-		const date = moment();
+    const date = moment();
 
     this.state = {
       date
@@ -17,18 +17,18 @@ export default class Calendar extends Component {
 
   previous() {
     this.setState((state, props) => {
-			return {
-				date: state.date.subtract(1, 'month')
-			}
-		});
+      return {
+        date: state.date.subtract(1, 'month')
+      }
+    });
   }
 
   next() {
     this.setState((state, props) => {
-			return {
-				date: state.date.add(1, 'month')
-			}
-		});
+      return {
+        date: state.date.add(1, 'month')
+      }
+    });
   }
 
   selectDay(date, selected) {
@@ -39,59 +39,55 @@ export default class Calendar extends Component {
     var title = prompt("What's the appointment?");
 
     if (title) {
-        this.props.addAppointment(date, title);
+      this.props.addAppointment(date, title);
     }
   }
 
   _renderWeeks() {
-			const month = this.state.date;
+    const month = this.state.date;
+    const firstDayOfWeek = month.clone().localeData().firstDayOfWeek();
+    const firstOfMonth = month.clone().startOf('month').hour(12);
+    const lastOfMonth = month.clone().endOf('month').hour(12);
 
-			const firstDayOfWeek = moment.localeData().firstDayOfWeek();
-		  const firstOfMonth = month.clone().startOf('month').hour(12);
-		  const lastOfMonth = month.clone().endOf('month').hour(12);
+    // calculate the exact first and last days to fill the entire matrix
+    // (considering days outside month)
+    const prevDays = ((firstOfMonth.day() + 7 - firstDayOfWeek) % 7);
+    const nextDays = ((firstDayOfWeek + 6 - lastOfMonth.day()) % 7);
+    const firstDay = firstOfMonth.clone().subtract(prevDays, 'day');
+    const lastDay = lastOfMonth.clone().add(nextDays, 'day');
 
-		  // calculate the exact first and last days to fill the entire matrix
-		  // (considering days outside month)
-		  const prevDays = ((firstOfMonth.day() + 7 - firstDayOfWeek) % 7);
-		  const nextDays = ((firstDayOfWeek + 6 - lastOfMonth.day()) % 7);
-		  const firstDay = firstOfMonth.clone().subtract(prevDays, 'day');
-		  const lastDay = lastOfMonth.clone().add(nextDays, 'day');
+    const totalDays = lastDay.diff(firstDay, 'days') + 1;
 
-		  const totalDays = lastDay.diff(firstDay, 'days') + 1;
+    const currentDay = firstDay.clone();
+    const weeksInMonth = [];
 
-		  const currentDay = firstDay.clone();
-		  const weeksInMonth = [];
+    for (let i = 0; i < totalDays; i += 1) {
+      if (i % 7 === 0) {
+        weeksInMonth.push([]);
+      }
 
-		  for (let i = 0; i < totalDays; i += 1) {
-		    if (i % 7 === 0) {
-		      weeksInMonth.push([]);
-		    }
+      let day = currentDay.clone();
 
-		    let day = null;
-		    if ((i >= prevDays && i < (totalDays - nextDays)) || true) {
-		      day = currentDay.clone();
-		    }
+      weeksInMonth[weeksInMonth.length - 1].push(day);
 
-		    weeksInMonth[weeksInMonth.length - 1].push(day);
+      currentDay.add(1, 'day');
+    }
 
-		    currentDay.add(1, 'day');
-		  }
-
-			return weeksInMonth.map((week, index) => {
-				return <Week
-                  appointment={this.props.appointments}
-                  selectDay={this.selectDay}
-                  key={index}
-                  week={week}
-                  month={month.month()}
-                />
-			});
+    return weeksInMonth.map((week, index) => {
+      return <Week
+              appointment={this.props.appointments}
+              selectDay={this.selectDay}
+              key={index}
+              week={week}
+              month={month.month()}
+      />
+    });
   }
 
   _renderMonthLabel() {
 
     const monthName = this.state.date.format('MMMM'),
-      year = this.state.date.format('YYYY');
+          year = this.state.date.format('YYYY');
 
     return <h1>{monthName} {year}</h1>;
   }
@@ -99,13 +95,13 @@ export default class Calendar extends Component {
   render() {
     return (
       <div className="calendar">
-          <div className="header">
-            <i onClick={() => this.previous()}>Back</i>
+        <div className="header">
+          <i onClick={() => this.previous()}>Back</i>
             {this._renderMonthLabel()}
-            <i onClick={() => this.next()}>Forward</i>
-          </div>
-          {this._renderWeeks()}
-          <p className="info">* Click on a date to set up an appointment</p>
+          <i onClick={() => this.next()}>Forward</i>
+        </div>
+        {this._renderWeeks()}
+        <p className="info">* Click on a date to set up an appointment</p>
       </div>
     )
   }
@@ -115,31 +111,37 @@ export default class Calendar extends Component {
 class Week extends Component {
 
   _renderDays() {
-		return this.props.week.map((date, index) => {
+    return this.props.week.map((date, index) => {
       // add disabled class for days outside of month
-			const disabled = this.props.month !== date.month() && true;
+      const disabled = this.props.month !== date.month() && true;
       // return appointment if it exists
-      const selected = this.props.appointment.filter(data => { return Number(data.date) === Number(date.format('x')) }).length;
+      const selected = this.props.appointment.filter(data => {
+        return Number(data.date) === Number(date.format('x'))
+      }).length;
 
-			return <Day
-                key={index}
-                selectDay={this.props.selectDay}
-                disabled={disabled}
-                selected={selected}
-                day={date}
-              />
-		});
+      return <Day
+              key={index}
+              selectDay={this.props.selectDay}
+              disabled={disabled}
+              selected={selected}
+              day={date}
+            />
+    });
   }
 
   render() {
     return (
       <div className="week">
-					{this._renderDays()}
+        {this._renderDays()}
       </div>
     )
   }
 };
 
 const Day = (props) => {
-  return <span className={(props.disabled ? 'disabled ' : '') + (props.selected ? 'selected' : '')} onClick={() => props.selectDay(props.day.format('x'), props.selected)}>{props.day.format('D')}</span>;
+  return (
+    <span className={(props.disabled ? 'disabled ' : '') + (props.selected ? 'selected' : '')} onClick={() => props.selectDay(props.day.format('x'), props.selected)}>
+      {props.day.format('D')}
+    </span>
+  )
 };

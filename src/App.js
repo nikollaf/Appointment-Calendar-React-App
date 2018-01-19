@@ -25,7 +25,7 @@ class App extends Component {
 		}
 
 		this.setState({
-		    appointments: [...this.state.appointments, newAppointment]
+			appointments: [...this.state.appointments, newAppointment]
 		});
 	}
 
@@ -33,22 +33,22 @@ class App extends Component {
 		const newResults = this.state.appointments.filter(el => el.date !== date);
 
 		this.setState({
-        appointments: newResults
-    });
+			appointments: newResults
+		});
 	}
 
-  render() {
-    return (
-      <div className="App">
-        <Calendar
-					appointments={this.state.appointments}
-					addAppointment={this.addAppointment}/>
-				<Appointments
-					appointments={this.state.appointments}
-					removeAppointment={this.removeAppointment}/>
-      </div>
-    );
-  }
+	render() {
+		return (
+			<div className="App">
+			<Calendar
+				appointments={this.state.appointments}
+				addAppointment={this.addAppointment}/>
+			<Appointments
+				appointments={this.state.appointments}
+				removeAppointment={this.removeAppointment}/>
+			</div>
+		);
+	}
 }
 
 export default App;

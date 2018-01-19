@@ -4,17 +4,17 @@ import './Appointments.scss';
 
 export default class Appointments extends Component {
 	constructor(props) {
-    super(props);
+		super(props);
 
 		this.state = {
 			data: props.appointments
 		}
-  }
+	}
 
 	componentWillReceiveProps(nextProps) {
 		if (nextProps.appointments !== this.props.appointments) {
 			this.setState({
-		    data: nextProps.appointments
+				data: nextProps.appointments
 			});
 		}
 	}
@@ -24,10 +24,10 @@ export default class Appointments extends Component {
 
 		return data.map((list, index) => {
 			return <List
-                key={index}
-                list={list}
-                removeAppointment={this.props.removeAppointment}
-              />
+								key={index}
+								list={list}
+								removeAppointment={this.props.removeAppointment}
+							/>
 		});
 	}
 
@@ -42,62 +42,62 @@ export default class Appointments extends Component {
 }
 
 class List extends Component {
-  constructor(props) {
-    super(props);
+	constructor(props) {
+		super(props);
 
 		this.state = {
-      date: props.list.date,
+			date: props.list.date,
 			name: props.list.name,
-      isEdit: false
+			isEdit: false
 		}
 
-    this.changeText = this.changeText.bind(this);
-    this.toggleEdit = this.toggleEdit.bind(this);
-  }
+		this.changeText = this.changeText.bind(this);
+		this.toggleEdit = this.toggleEdit.bind(this);
+	}
 
-  componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps(nextProps) {
 		if (nextProps.list !== this.props.list) {
 			this.setState({
-		    date: nextProps.list.date,
-  			name: nextProps.list.name,
-        isEdit: false
+				date: nextProps.list.date,
+				name: nextProps.list.name,
+				isEdit: false
 			});
 		}
 	}
 
-  changeText(event) {
-    this.setState({name: event.target.value});
-  }
+	changeText(event) {
+		this.setState({name: event.target.value});
+	}
 
-  toggleEdit() {
-    this.setState((state, props) => {
+	toggleEdit() {
+		this.setState((state, props) => {
 			return {
 				isEdit: !state.isEdit
 			}
 		});
-  }
+	}
 
-  render() {
+	render() {
 		const state = this.state;
 
-    return (
-      <div>
-      {state.isEdit ? (
-        <div className="list">
-          <input value={state.name} onChange={this.changeText}/>
-          <button className="update" onClick={this.toggleEdit}>Update</button>
-          <button className="delete" onClick={() => this.props.removeAppointment(state.date)}>Delete</button>
-        </div>
-      ) : (
-        <div className="list">
-          <div>
-            <span>({moment.utc(state.date).format('MMM Do')})</span> {state.name}
-          </div>
-          <button onClick={this.toggleEdit}>Edit</button>
-        </div>
-        )
-      }
-      </div>
-    )
-  }
+		return (
+			<div>
+			{state.isEdit ? (
+				<div className="list">
+					<input value={state.name} onChange={this.changeText}/>
+					<button className="update" onClick={this.toggleEdit}>Update</button>
+					<button className="delete" onClick={() => this.props.removeAppointment(state.date)}>Delete</button>
+				</div>
+			) : (
+				<div className="list">
+					<div>
+						<span>({moment.utc(state.date).format('MMM Do')})</span> {state.name}
+					</div>
+					<button onClick={this.toggleEdit}>Edit</button>
+				</div>
+			)
+		}
+		</div>
+		)
+	}
 };
