@@ -1,0 +1,52 @@
+$border_grey: #ccc;
+$green: #2eb1a5;
+
+.calendar {
+  width: 350px;
+  margin: 0 auto;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #ccc;
+
+    h1 {
+      font-size: 18px;
+    }
+
+    i {
+      font-size: 12px;
+      margin-top: 18px;
+    }
+  }
+
+  .week {
+    border-bottom: 1px solid #ccc;
+
+    span {
+      padding: 15px;
+      width: 5.2%;
+      display: inline-block;
+      border-left: 1px solid #ccc;
+
+      &:last-child {
+        border-right: 1px solid #ccc;
+      }
+
+      &.disabled {
+        color: $border_grey;
+      }
+
+      &.selected {
+        color: #fff;
+        background-color: $green;
+      }
+    }
+  }
+
+  .info {
+    font-size: 14px;
+    text-align: center;
+    margin-top: 5px;
+  }
+}
